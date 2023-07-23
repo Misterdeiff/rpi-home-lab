@@ -1,0 +1,48 @@
+- name: Include common variables
+  include_vars:
+    file: "{{ playbook_dir }}/roles/common/vars/main.yml"
+    
+- name: "Update Apt Cache"
+  apt: 
+    update_cache: yes
+  tags: installation
+
+- name: "Install Common packages"
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - vim
+    - curl
+    - zsh
+    - git
+    - apt-transport-https
+    - ca-certificates
+    - ntfs-3g
+    - gnupg2
+    - fail2ban
+    - software-properties-common
+    - python3-venv
+  tags: installation, packages
+
+- name: Get Docker key
+  shell: curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+  tags: docker
+
+- name: Add Docker key
+  command: sudo apt-key fingerprint 0EBFCD88
+  tags: docker
+
+- name: Add Docker repository to docker.list
+  shell: |
+    echo "deb [arch=armhf] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | 
+    sudo tee /etc/apt/sources.list.d/docker.list
+  tags: docker
+
+- name: Install docker-ce and docker-compose
+  shell: sudo apt-get update && sudo apt-get install -y --no-install-recommends docker-ce docker-compose
+  tags: docker
+
+- name: Install Argon fan script
+  shell: curl https://download.argon40.com/argon1.sh | bash
+  tags: argon

@@ -1,0 +1,109 @@
+version: "3.7"
+
+services:
+
+  samba:
+    image: dperson/samba
+    restart: always
+    command: |
+      -u "{{ SAMBA_USER1 }};{{ SAMBA_PASS1 }}"
+      -u "{{ SAMBA_USER2 }};{{ SAMBA_PASS2 }}"
+      -s "Media;/Media;yes;no"
+      -s "Downloads;/Downloads;yes;no"
+      -s "{{ SAMBA_USER1 }};/{{ SAMBA_USER1 }};yes;no"
+      -s "{{ SAMBA_USER2 }};/{{ SAMBA_USER2 }};yes;no"
+    stdin_open: true
+    tty: true
+    environment:
+      - TZ={{ TIMEZONE }}
+    ports:
+      - 139:139
+      - 445:445
+    volumes:
+      - {{ STORAGE }}/Media:/Media
+      - {{ STORAGE }}/Media/Downloads:/Downloads
+      - {{ STORAGE }}/files/{{ SAMBA_USER1 }}:/files/{{ SAMBA_USER1 }}
+      - {{ STORAGE }}/files/{{ SAMBA_USER2 }}:/files/{{ SAMBA_USER2 }}
+
+  plex:
+    image: jaymoulin/plex:latest
+    restart: unless-stopped
+    expose:
+      - 32400
+      - 33400
+    hostname: plex
+    environment:
+      - TZ={{ TIMEZONE }}
+      - PLEX_CLAIM="{{ CLAIM_TOKEN }}"
+    volumes:
+      - {{ STORAGE }}/Plex Media Server:/root/Library/Application Support/Plex Media Server
+      - {{ STORAGE }}/Media:/media
+    network_mode: host
+    {# networks: #}
+    {#   lan: #}
+    {#     ipv4_address: 192.168.0.36 #}
+
+{#  transmission: #}
+{#    image : jaymoulin/transmission:3.00-1.6.1 #}
+{#    command: transmission-daemon -f -g /config #}
+{#    volumes: #}
+{#      - ./transmission:/config #}
+{#      - {{ STORAGE }}/torrents:/Downloads #}
+{#    ports: #}
+{#      - 9091:9091 #}
+{#      - 51413:51413 #}
+{#      - 51413:51413/udp #}
+{#    expose: #}
+{#      - 9091 #}
+{#    restart: unless-stopped #}
+{# #}
+{#  netatalk: #}
+{#    image: dubodubonduponey/netatalk:v1 #}
+{#    restart: unless-stopped #}
+{#    volumes: #}
+{#      - {{ STORAGE }}/files/timemachine:/files/timemachine #}
+{#    environment: #}
+{#      - USERS={{ SAMBA_USER1 }},{{ SAMBA_USER2 }} #}
+{#      - PASSWORDS={{ SAMBA_PASS1 }},{{ SAMBA_PASS2 }} #}
+{#      - NAME=timemachine #}
+{#      - AVAHI_NAME=timemachine #}
+{#    cap_add: #}
+{#      - NET_BIND_SERVICE #}
+{#      - CHOWN #}
+{#      - FOWNER #}
+{#      - SETUID #}
+{#      - SETGID #}
+{#      - DAC_OVERRIDE #}
+{#    cap_drop: #}
+{#      - ALL #}
+{#    network_mode: host #}
+{# #}
+{#  flexget: #}
+{#    image: wiserain/flexget:3.5 #}
+{#    volumes: #}
+{#      - ./flexget:/config #}
+{#      - ./flexget/custom-cont-init.d:/custom-cont-init.d #}
+{#      - {{ STORAGE }}/torrents:/Downloads #}
+{#      - {{ STORAGE }}/Media:/storage #}
+{#      - {{ STORAGE }}/Media/Movies:/Media/Movies #}
+{#      - {{ STORAGE }}/Media/Series:/Media/Series #}
+{#    ports: #}
+{#      - 5050:5050 #}
+{#    environment: #}
+{#      - PUID=1001 #}
+{#      - PGID=1001 #}
+{#      - TORRENT_PLUGIN=transmission #}
+{#      - FG_WEBUI_PASSWD={{ TRANSMISSION_PASS }} #}
+{#    restart: unless-stopped #}
+{#    links: #}
+{#      - transmission #}
+
+  {# networks: #}
+  {#   lan: #}
+  {#     driver: macvlan #}
+  {#     driver_opts: #}
+  {#       parent: eth0 #}
+  {#     ipam: #}
+  {#       config: #}
+  {#         - subnet: "192.168.0.0/24" #}
+  {#         - gateway: "192.168.0.1" #}

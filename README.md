@@ -1,4 +1,74 @@
-# Plex sobre Docker en Raspberry
+# Ansible
+## Requirements
+1. Install Ansible in your laptop
+```shell
+brew install ansible
+```
+2. Load OS
+     2.1. Use Raspberry Pi Imager and select Raspberry Pi OS Lite 64-bit in the SD of the Raspberry Pi
+     2.2. Add your SSH key
+     2.3. Don't configure WiFi
+3. Connect your drives to Linux, run `lsblk -f` and find out their UUIDs
+4. Modify variables inside `roles/common/vars/main.yml`.
+5. Run all tasks in the playbook.
+
+### Get a List of Playbook Tasks
+``` shell
+ansible-playbook -i inventories/hosts -K playbook.yml --list-tasks
+```
+
+### Run all Tasks in Playbook
+```shell
+ansible-playbook -i inventories/hosts -K playbook.yml
+```
+
+## Test changes
+Use --check for a dry run and, in addition, use --diff to have a detail differences
+
+```shell
+ansible-playbook -i inventories/hosts -K playbook.yml -t docker --check --diff
+```
+
+### Run task with a Specific Tag - Example: Docker installation
+```shell
+ansible-playbook -i inventories/hosts -K playbook.yml -t docker
+```
+
+
+# Argon Case
+More info: https://wagnerstechtalk.com/argonone/
+## Argon Case button behaviour
+BUTTON STATE	ACTION	                FUNCTION
+OFF	        Short Press	        Turn ON
+ON	        Long Press (>= 3s)	Soft Shutdown and Power Cut
+ON	        Short press (<3s)	Nothing
+ON	        Double tap	        Reboot
+ON	        Long Press (>= 5s)	Forced Shutdown
+
+## Argon ONE V2 fan script
+By default this is the behaviour after installing the script:
+
+CPU TEMP        FAN POWER
+55’C	        10%
+60’C	        55%
+65’C	        100%
+
+You can config different settings by using `argonone-config`. To uninstall: `argonone-uninstall`.
+
+# Containers
+## NetaTalk
+1. Run the next lines in your MacBook. Don't forget to change the USER and PASS.
+
+````
+defaults write com.apple.systempreferences TMShowUnsupportedNetworkVolumes 1
+sudo tmutil setdestination afp://USER:PASS@rpi.local/Time\ Machine
+````
+2. Go to Time Machine and verify the disk is properly set.
+3. (Optional) Download TimeMachineEditor
+     3.1. Set backups every day
+     3.2. Do not backup during the day
+
+## Plex sobre Docker en Raspberry
 
 Con este repo podes crear tu propio server que descarga tus series y peliculas automáticamente, y cuando finaliza, las copia al directorio `media/` donde Plex las encuentra y las agrega a tu biblioteca.
 
@@ -8,7 +78,7 @@ Todo esto es parte de unos tutoriales que estoy subiendo a [Youtube](https://www
 
 NOTA: Esta repo fue actualizada para correr usando flexget y transmission [en este video](https://youtu.be/TqVoHWjz_tI), podés todavia acceder a la versión vieja (con rtorrent) en la branch [rtorrent](https://github.com/pablokbs/plex-rpi/tree/rtorrent)
 
-## Requerimientos iniciales
+### Requerimientos iniciales
 
 Agregar tu usuario (cambiar `kbs` con tu nombre de usuario)
 
@@ -88,16 +158,22 @@ echo UUID="{nombre del disco o UUID que es único por cada disco}" {directorio d
 mount -a (o reiniciar)
 ```
 
-## Cómo correrlo
 
-Simplemente bajate este repo y modificá las rutas de tus archivos en el archivo (oculto) .env, y después corré:
-
-`docker-compose up -d`
-
-## IMPORTANTE
+### IMPORTANTE
 
 Las raspberry son computadoras excelentes pero no muy potentes, y plex por defecto intenta transcodear los videos para ahorrar ancho de banda (en mi opinión, una HORRIBLE idea), y la chiquita raspberry no se aguanta este transcodeo "al vuelo", entonces hay que configurar los CLIENTES de plex (si, hay que hacerlo en cada cliente) para que intente reproducir el video en la máxima calidad posible, evitando transcodear y pasando el video derecho a tu tele o Chromecast sin procesar nada, de esta forma, yo he tenido 3 reproducciones concurrentes sin ningún problema. En android y iphone las opciones son muy similares, dejo un screenshot de Android acá:
 
 <img src="https://i.imgur.com/F3kZ9Vh.png" alt="plex" width="400"/>
 
 Más info acá: https://github.com/pablokbs/plex-rpi/issues/3
+
+
+## Transmission
+Download Google Chrome extension "Transmission easy client". This plugin allows you to access to the WEB GUI <Raspberry_Pi_IP>:9091/transmission/web/#files
+
+
+# Improvements
+- Install PiHole
+
+# TODO
+- Fix mount disks: Mount disks does not work straight without reboot

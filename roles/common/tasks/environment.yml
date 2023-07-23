@@ -1,0 +1,22 @@
+- name: Copy aliases
+  copy: 
+    src=.bash_aliases 
+    dest="{{ USER_PATH }}/.bash_aliases"
+  tags: aliases
+
+- name: Append disks config to fstab
+  become: true
+  blockinfile:
+    path: /etc/fstab
+    block: |
+      UUID={{DISK1_UUID}} {{DISK1_MOUNT}} {{DISK1_FS}} defaults 0 0
+      UUID={{DISK2_UUID}} {{DISK2_MOUNT}} {{DISK2_FS}} defaults 0 0
+    state: present
+    create: yes
+    insertafter: EOF
+  tags: mount-disk
+
+- name: Mount disks
+  become: true
+  command: mount -a
+  tags: mount-disk
