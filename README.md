@@ -5,7 +5,7 @@
 brew install ansible
 ```
 2. Load OS
-     2.1. Use Raspberry Pi Imager and select Raspberry Pi OS Lite 64-bit in the SD of the Raspberry Pi
+     2.1. Use Raspberry Pi Imager and select `Raspberry Pi OS Lite 64-bit` in the SD of the Raspberry Pi
      2.2. Add your SSH key
      2.3. Don't configure WiFi
 3. Connect your drives to Linux, run `lsblk -f` and find out their UUIDs
