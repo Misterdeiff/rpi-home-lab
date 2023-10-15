@@ -9,8 +9,9 @@
   blockinfile:
     path: /etc/fstab
     block: |
-      UUID={{DISK1_UUID}} {{DISK1_MOUNT}} {{DISK1_FS}} defaults 0 0
-      UUID={{DISK2_UUID}} {{DISK2_MOUNT}} {{DISK2_FS}} defaults 0 0
+      {%- for drive in DRIVES -%}
+      UUID={{ drive.UUID }} {{ drive.MOUNT }} {{ drive.FS }} defaults 0 0
+      {%- endfor -%}
     state: present
     create: yes
     insertafter: EOF

@@ -6,12 +6,14 @@ services:
     image: dperson/samba
     restart: always
     command: |
-      -u "{{ SAMBA_USER1 }};{{ SAMBA_PASS1 }}"
-      -u "{{ SAMBA_USER2 }};{{ SAMBA_PASS2 }}"
+      {%- for user in SAMBA -%}
+      -u "{{ user.USER }};{{ user.PASS }}"
+      {%- endfor -%}
       -s "Media;/Media;yes;no"
       -s "Downloads;/Downloads;yes;no"
-      -s "{{ SAMBA_USER1 }};/{{ SAMBA_USER1 }};yes;no"
-      -s "{{ SAMBA_USER2 }};/{{ SAMBA_USER2 }};yes;no"
+      {%- for user in SAMBA -%}
+      -s "{{ user.USER }};/{{ user.USER }};yes;no"
+      {%- endfor -%}
     stdin_open: true
     tty: true
     environment:
@@ -22,8 +24,9 @@ services:
     volumes:
       - {{ STORAGE }}/Media:/Media
       - {{ STORAGE }}/Media/Downloads:/Downloads
-      - {{ STORAGE }}/files/{{ SAMBA_USER1 }}:/files/{{ SAMBA_USER1 }}
-      - {{ STORAGE }}/files/{{ SAMBA_USER2 }}:/files/{{ SAMBA_USER2 }}
+      {%- for user in SAMBA -%}
+      - {{ STORAGE }}/files/{{ user.USER }}:/files/{{ user.USER }}
+      {%- endfor -%}
 
   plex:
     image: jaymoulin/plex:latest
@@ -63,8 +66,8 @@ services:
 {#    volumes: #}
 {#      - {{ STORAGE }}/files/timemachine:/files/timemachine #}
 {#    environment: #}
-{#      - USERS={{ SAMBA_USER1 }},{{ SAMBA_USER2 }} #}
-{#      - PASSWORDS={{ SAMBA_PASS1 }},{{ SAMBA_PASS2 }} #}
+{#      - USERS={{ SAMBA | map(attribute='USER') | join(',') }}
+{#      - PASSWORDS={{ SAMBA | map(attribute='PASS') | join(',') }}
 {#      - NAME=timemachine #}
 {#      - AVAHI_NAME=timemachine #}
 {#    cap_add: #}
