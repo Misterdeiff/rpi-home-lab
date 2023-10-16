@@ -6,14 +6,12 @@ services:
     image: dperson/samba
     restart: always
     command: |
-      {%- for user in SAMBA -%}
+      {% for user in SAMBA -%}
       -u "{{ user.USER }};{{ user.PASS }}"
-      {%- endfor -%}
+      -s "{{ user.USER }};/{{ user.USER }};yes;no"
+      {% endfor -%}
       -s "Media;/Media;yes;no"
       -s "Downloads;/Downloads;yes;no"
-      {%- for user in SAMBA -%}
-      -s "{{ user.USER }};/{{ user.USER }};yes;no"
-      {%- endfor -%}
     stdin_open: true
     tty: true
     environment:
@@ -24,27 +22,23 @@ services:
     volumes:
       - {{ STORAGE }}/Media:/Media
       - {{ STORAGE }}/Media/Downloads:/Downloads
-      {%- for user in SAMBA -%}
+      {% for user in SAMBA -%}
       - {{ STORAGE }}/files/{{ user.USER }}:/files/{{ user.USER }}
-      {%- endfor -%}
+      {% endfor %}
 
   plex:
-    image: jaymoulin/plex:latest
-    restart: unless-stopped
-    expose:
-      - 32400
-      - 33400
+    image: jaymoulin/plex:latest 
     hostname: plex
+    network_mode: host
     environment:
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
+      - VERSION=docker
       - TZ={{ TIMEZONE }}
-      - PLEX_CLAIM="{{ CLAIM_TOKEN }}"
     volumes:
       - {{ STORAGE }}/Plex Media Server:/root/Library/Application Support/Plex Media Server
       - {{ STORAGE }}/Media:/media
-    network_mode: host
-    {# networks: #}
-    {#   lan: #}
-    {#     ipv4_address: 192.168.0.36 #}
+    restart: unless-stopped
 
 {#  transmission: #}
 {#    image : jaymoulin/transmission:3.00-1.6.1 #}

@@ -50,7 +50,7 @@ ON	        Long Press (>= 5s)	Forced Shutdown
 ## Argon ONE V2 fan script
 By default this is the behaviour after installing the script:
 
-CPU TEMP        FAN POWER
+CPU TEMP     FAN POWER
 55’C	        10%
 60’C	        55%
 65’C	        100%
@@ -58,6 +58,11 @@ CPU TEMP        FAN POWER
 You can config different settings by using `argonone-config`. To uninstall: `argonone-uninstall`.
 
 # Containers
+## Plex
+1. Go to http://YOUR_IP:32400/web/index.html
+2. Configure your folders
+3. Add server in your end device
+
 ## NetaTalk
 1. Run the next lines in your MacBook. Don't forget to change the USER and PASS.
 
