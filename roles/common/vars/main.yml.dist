@@ -17,9 +17,6 @@ TIMEZONE: Europe/Madrid
 PUID: 1000 # Run id -u in Raspberry
 PGID: 1000 # Run id -g in Raspberry
 
-#Docker
-DOCKER_TMPDIR: "{{ DRIVES[0]['MOUNT'] }}/tmp/docker"
-
 # SAMBA documents
 SAMBA:
   - USER: USER1

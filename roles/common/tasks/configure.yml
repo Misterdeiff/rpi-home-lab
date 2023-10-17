@@ -7,8 +7,9 @@
 - name: Append a line to docker file to store temps in disk
   lineinfile:
     path: /etc/default/docker
-    line: export DOCKER_TMPDIR="{{ STORAGE }}/docker-tmp"
+    line: export DOCKER_TMPDIR="{{ STORAGE }}/tmp/docker"
     insertafter: EOF
+  tags: docker
 
 - name: Add my user to Docker
   command: "sudo usermod -a -G docker {{ USER }}"
