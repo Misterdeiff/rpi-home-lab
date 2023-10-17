@@ -4,6 +4,18 @@
     dest="{{ USER_PATH }}/.bash_aliases"
   tags: aliases
 
+- name: Create mount point directories
+  become: true
+  file:
+    path: "{{ item.MOUNT }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  loop: "{{ DRIVES }}"
+  when: not (item.MOUNT is exists)
+  tags: mount-disk
+
 - name: Append disks config to fstab
   become: true
   blockinfile:
