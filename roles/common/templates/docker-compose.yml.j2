@@ -11,6 +11,7 @@ services:
       {% endfor -%}
       -s "Media;/Media;yes;no"
       -s "Downloads;/Downloads;yes;no"
+      -s "TimeMachine;/TimeMachine;yes;no"
     stdin_open: true
     tty: true
     environment:
@@ -21,6 +22,7 @@ services:
     volumes:
       - {{ STORAGE }}/Media:/Media
       - {{ STORAGE }}/Media/Downloads:/Downloads
+      - {{ DRIVES[1]['MOUNT'] }}:/TimeMachine
       {% for user in SAMBA -%}
       - {{ STORAGE }}/files/{{ user.USER }}:/files/{{ user.USER }}
       {% endfor %}

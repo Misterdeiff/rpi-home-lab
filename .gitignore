@@ -9,4 +9,4 @@
 files/flexget/*.sqlite
 files/transmission/dht.dat
 files/transmission/stats.json
-roles/common/vars/*
+roles/common/vars/main.yml
