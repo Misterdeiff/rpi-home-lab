@@ -30,6 +30,7 @@ services:
   plex:
     image: jaymoulin/plex:latest 
     hostname: plex
+    restart: unless-stopped
     network_mode: host
     environment:
       - PUID={{ PUID }}
@@ -39,7 +40,6 @@ services:
     volumes:
       - {{ STORAGE }}/Plex Media Server:/root/Library/Application Support/Plex Media Server
       - {{ STORAGE }}/Media:/media
-    restart: unless-stopped
 
 {#  transmission: #}
 {#    image : jaymoulin/transmission:3.00-1.6.1 #}
@@ -54,28 +54,7 @@ services:
 {#    expose: #}
 {#      - 9091 #}
 {#    restart: unless-stopped #}
-{# #}
-{#  netatalk: #}
-{#    image: dubodubonduponey/netatalk:v1 #}
-{#    restart: unless-stopped #}
-{#    volumes: #}
-{#      - {{ STORAGE }}/files/timemachine:/files/timemachine #}
-{#    environment: #}
-{#      - USERS={{ SAMBA | map(attribute='USER') | join(',') }}
-{#      - PASSWORDS={{ SAMBA | map(attribute='PASS') | join(',') }}
-{#      - NAME=timemachine #}
-{#      - AVAHI_NAME=timemachine #}
-{#    cap_add: #}
-{#      - NET_BIND_SERVICE #}
-{#      - CHOWN #}
-{#      - FOWNER #}
-{#      - SETUID #}
-{#      - SETGID #}
-{#      - DAC_OVERRIDE #}
-{#    cap_drop: #}
-{#      - ALL #}
-{#    network_mode: host #}
-{# #}
+
 {#  flexget: #}
 {#    image: wiserain/flexget:3.5 #}
 {#    volumes: #}
