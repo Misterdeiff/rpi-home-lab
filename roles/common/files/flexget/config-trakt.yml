@@ -80,7 +80,7 @@ tasks:
 # En las tareas discover-* buscamos el contenido de las listas previamente generadas.
 # Usando los templates previamente creados, pasamos la configuración de lo que queremos ver.
 
-discover-series:
+  discover-series:
     template: tv
     discover:
       what:
@@ -118,7 +118,7 @@ discover-series:
       username: ${TRANSMISSION_USER}
       password: ${TRANSMISSION_PASS}
 
- discover-movies:
+  discover-movies:
     template: movies
     quality: 720p+ hdtv+ # Make sure no screeners or cams are downloaded
     discover:
@@ -152,9 +152,8 @@ discover-series:
       username: ${TRANSMISSION_USER}
       password: ${TRANSMISSION_PASS}
 
-# Order downloads
-
- sort_tv:
+  # Order downloads
+  sort_tv:
     priority: 2
     no_entries_ok: yes
     parsing:
@@ -178,7 +177,7 @@ discover-series:
             mkdir -p "/storage/series/{{ tvdb_series_name }}/Season {{ series_season }}" && cp "{{ location }}" "/storage/series/{{ tvdb_series_name }}/Season {{ series_season }}/{{ tvdb_series_name }} - {{ series_id }}{{ location | pathext }}"
           fi
 
- sort_movies:
+  sort_movies:
     priority: 2
     no_entries_ok: yes
     filesystem:
@@ -197,8 +196,8 @@ discover-series:
          else
            mkdir -p "/storage/pelis/{{ movie_name }} ({{ movie_year }})" && cp "{{ location }}" "/storage/pelis/{{ movie_name }} ({{ movie_year }})/{{ movie_name }} ({{ movie_year }}){{ location | pathext }}"
          fi
-# Clean Transmission
 
+  # Clean Transmission
   remove-stale-torrents:
     from_transmission:
       host: transmission
@@ -208,7 +207,7 @@ discover-series:
     disable: [seen, seen_info_hash]
     if:
       - transmission_progress == 100: accept
-            - not transmission_seed_ratio_ok: reject
+      - not transmission_seed_ratio_ok: reject
       - not transmission_idle_limit_ok: reject
     transmission:
       host: transmission
