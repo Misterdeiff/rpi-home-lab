@@ -33,3 +33,15 @@
   become: true
   command: mount -a
   tags: mount-disk
+
+- name: Copy Flexget files
+  copy:
+    src: "{{ role_path }}/files/flexget"
+    dest: "{{ STORAGE }}/docker/"
+  tags: docker, docker-compose, flexget
+
+- name: Copy Transmission files
+  copy:
+    src: "{{ role_path }}/files/transmission"
+    dest: "{{ STORAGE }}/docker/"
+  tags: docker, docker-compose, transmission

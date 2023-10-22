@@ -20,35 +20,5 @@
   tags: docker, docker-compose
 
 - name: Start Docker
-  command: sudo docker-compose up -d
-  environment: 
-    COMPOSE_HTTP_TIMEOUT: "180"
+  command: sudo COMPOSE_HTTP_TIMEOUT=200 docker-compose up -d
   tags: docker, docker-compose
-
-# ZSH
-- name: Install Oh My Zsh
-  become_user: "{{ USER }}"
-  git:
-    repo: https://github.com/ohmyzsh/ohmyzsh.git
-    dest: ~/.oh-my-zsh
-    clone: yes
-  tags: packages, zsh
-
-- name: Generate zshrc file and copy it
-  become_user: "{{ USER }}"
-  template:
-    src: zshrc.j2
-    dest: "~/.zshrc"
-  tags: packages, zsh
-
-- name: Install Powerlevel10k theme
-  become_user: "{{ USER }}"
-  git:
-    repo: https://github.com/romkatv/powerlevel10k.git
-    dest: ~/.oh-my-zsh/custom/themes/powerlevel10k
-  tags: packages, zsh
-
-- name: Set Zsh as default shell
-  become: true
-  shell: chsh -s "$(which zsh)" {{ USER }}
-  tags: packages, zsh

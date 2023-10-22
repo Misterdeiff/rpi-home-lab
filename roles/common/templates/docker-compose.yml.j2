@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.8"
 
 services:
   samba:
@@ -38,49 +38,37 @@ services:
       - VERSION=docker
       - TZ={{ TIMEZONE }}
     volumes:
-      - {{ STORAGE }}/Plex Media Server:/root/Library/Application Support/Plex Media Server
+      - {{ STORAGE }}/docker/Plex Media Server:/root/Library/Application Support/Plex Media Server
       - {{ STORAGE }}/Media:/media
 
-{#  transmission: #}
-{#    image : jaymoulin/transmission:3.00-1.6.1 #}
-{#    command: transmission-daemon -f -g /config #}
-{#    volumes: #}
-{#      - ./transmission:/config #}
-{#      - {{ STORAGE }}/torrents:/Downloads #}
-{#    ports: #}
-{#      - 9091:9091 #}
-{#      - 51413:51413 #}
-{#      - 51413:51413/udp #}
-{#    expose: #}
-{#      - 9091 #}
-{#    restart: unless-stopped #}
+  transmission:
+    image : jaymoulin/transmission:4.0.4-arm64v8
+    restart: unless-stopped
+    command: transmission-daemon -f -g /config
+    volumes:
+      - {{ STORAGE }}/docker/transmission:/config
+      - {{ STORAGE }}/Media/Downloads:/Downloads
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    expose:
+      - 9091
 
-{#  flexget: #}
-{#    image: wiserain/flexget:3.5 #}
-{#    volumes: #}
-{#      - ./flexget:/config #}
-{#      - ./flexget/custom-cont-init.d:/custom-cont-init.d #}
-{#      - {{ STORAGE }}/torrents:/Downloads #}
-{#      - {{ STORAGE }}/Media:/storage #}
-{#      - {{ STORAGE }}/Media/Movies:/Media/Movies #}
-{#      - {{ STORAGE }}/Media/Series:/Media/Series #}
-{#    ports: #}
-{#      - 5050:5050 #}
-{#    environment: #}
-{#      - PUID=1001 #}
-{#      - PGID=1001 #}
-{#      - TORRENT_PLUGIN=transmission #}
-{#      - FG_WEBUI_PASSWD={{ TRANSMISSION_PASS }} #}
-{#    restart: unless-stopped #}
-{#    links: #}
-{#      - transmission #}
-
-  {# networks: #}
-  {#   lan: #}
-  {#     driver: macvlan #}
-  {#     driver_opts: #}
-  {#       parent: eth0 #}
-  {#     ipam: #}
-  {#       config: #}
-  {#         - subnet: "192.168.0.0/24" #}
-  {#         - gateway: "192.168.0.1" #}
+  flexget:
+    image: wiserain/flexget:3.7.7
+    restart: unless-stopped
+    volumes:
+      - {{ STORAGE }}/docker/flexget:/config
+      - {{ STORAGE }}/docker/flexget/custom-cont-init.d:/custom-cont-init.d
+      - {{ STORAGE }}/Media/Downloads:/Downloads
+      - {{ STORAGE }}/Media:/storage
+    ports:
+      - 5050:5050
+    environment:
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
+      - TORRENT_PLUGIN=transmission
+      - FG_WEBUI_PASSWD={{ FLEXGET_PASS }}
+    links:
+      - transmission
