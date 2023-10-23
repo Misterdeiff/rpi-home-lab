@@ -3,6 +3,7 @@ version: "3.8"
 services:
   samba:
     image: dperson/samba
+    container_name: samba
     restart: always
     command: |
       {% for user in SAMBA -%}
@@ -28,7 +29,8 @@ services:
       {% endfor %}
 
   plex:
-    image: jaymoulin/plex:latest 
+    image: jaymoulin/plex:latest
+    container_name: plex
     hostname: plex
     restart: unless-stopped
     network_mode: host
@@ -43,6 +45,7 @@ services:
 
   transmission:
     image : jaymoulin/transmission:4.0.4-arm64v8
+    container_name: transmission
     restart: unless-stopped
     command: transmission-daemon -f -g /config
     volumes:
@@ -57,6 +60,7 @@ services:
 
   flexget:
     image: wiserain/flexget:3.7.7
+    container_name: flexget
     restart: unless-stopped
     volumes:
       - {{ STORAGE }}/docker/flexget:/config
