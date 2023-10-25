@@ -35,7 +35,7 @@
 
 - name: Add Docker repository to docker.list
   shell: |
-    echo "deb [arch=armhf] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | 
+    echo "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | 
     sudo tee /etc/apt/sources.list.d/docker.list
   tags: docker
 
