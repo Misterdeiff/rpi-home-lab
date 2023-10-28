@@ -6,7 +6,5 @@
 *.log
 .DS_Store
 .env
-files/flexget/*.sqlite
-files/transmission/dht.dat
-files/transmission/stats.json
+files/docker/*
 roles/common/vars/main.yml

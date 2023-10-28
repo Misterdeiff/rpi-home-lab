@@ -1,0 +1,108 @@
+web_server: yes
+
+# schedules:
+#   - tasks: '*'
+#     interval:
+#       minutes: 30
+
+# templates:
+#   tv:
+#     # regexp:
+#     #   reject:
+#     #     - x265: {from: title}
+#     series:
+#       settings:
+#         tv:
+#           exact: yes
+#           propers: 12 hours
+#           quality: #https://flexget.com/Plugins/quality#qualities
+#             - 1080p-2160p
+#             - hdtv-bluray
+#             - dd+5.1-truehd
+#       tv:
+#       - "Cosmos: A Personal Voyage"
+#       - "Cosmos: A Spacetime Odyssey"
+#       - "Cosmos: Possible Worlds"
+#       - Seven Worlds, One Planet
+#       - Planet Earth
+#       - Planet Earth 2
+#       - Our Planet
+#       - The Blue Planet
+#       - Blue Planet II
+#       - Life
+#       - Wild
+#       - The Hunt
+#       - Frozen Planet
+#       - "Dinosaurs: The Final Day"
+#       #- South Park
+#       #- La Resistencia
+#     transmission:
+#       host: transmission
+#       port: 9091
+#       username: ${TRANSMISSION_USER}
+#       password: ${TRANSMISSION_PASS}
+
+# tasks:
+#   eztvrss:
+#     rss: ${TRANSMISSION_RSS}
+#     template: tv
+#     priority: 2
+#   sort_tv:
+#     priority: 2
+#     no_entries_ok: yes
+#     parsing:
+#       series: guessit
+#     filesystem:
+#       path: /downloads/complete
+#       regexp: '.*\.(avi|mkv|mp4)$'
+#       recursive: yes
+#     accept_all: yes
+#     thetvdb_lookup: yes
+#     require_field: series_name
+#     all_series:
+#       parse_only: yes
+#     exec:
+#       auto_escape: yes
+#       on_output:
+#         for_entries: |
+#           if mediainfo "{{ location }}" | grep EAC3; then
+#             mkdir -p "/storage/series/{{ tvdb_series_name }}/Season {{ series_season }}" && ffmpeg -hwaccel auto -y -i "{{ location }}" -map 0 -c:s copy -c:v copy -c:a ac3 -b:a 640k "/storage/series/{{ tvdb_series_name }}/Season {{ series_season }}/{{ tvdb_series_name }} - {{ series_id }}{{ location | pathext }}"
+#           else
+#             mkdir -p "/storage/series/{{ tvdb_series_name }}/Season {{ series_season }}" && cp "{{ location }}" "/storage/series/{{ tvdb_series_name }}/Season {{ series_season }}/{{ tvdb_series_name }} - {{ series_id }}{{ location | pathext }}"
+#           fi
+#   sort_movies:
+#     priority: 2
+#     no_entries_ok: yes
+#     filesystem:
+#       path: /downloads/complete
+#       regexp: '.*\.(avi|mkv|mp4)$'
+#       recursive: yes
+#     accept_all: yes
+#     require_field: movie_name
+#     tmdb_lookup: yes
+#     exec:
+#       auto_escape: yes
+#       on_output:
+#        for_entries: |
+#          if mediainfo "{{ location }}" | grep EAC3; then
+#            mkdir -p "/storage/pelis/{{ movie_name }} ({{ movie_year }})" && ffmpeg -hwaccel auto -y -i "{{ location }}" -map 0 -c:s copy -c:v copy -c:a ac3 -b:a 640k "/storage/pelis/{{ movie_name }} ({{ movie_year }})/{{ movie_name }} ({{ movie_year }}){{ location | pathext }}"
+#          else
+#            mkdir -p "/storage/pelis/{{ movie_name }} ({{ movie_year }})" && cp "{{ location }}" "/storage/pelis/{{ movie_name }} ({{ movie_year }})/{{ movie_name }} ({{ movie_year }}){{ location | pathext }}"
+#          fi
+#   remove_stale_torrents:
+#     from_transmission:
+#       host: transmission
+#       port: 9091
+#       username: ${TRANSMISSION_USER}
+#       password: ${TRANSMISSION_PASS}
+#     disable: [seen, seen_info_hash]
+#     if:
+#       - transmission_progress == 100: accept
+#       - not transmission_seed_ratio_ok: reject
+#       - not transmission_idle_limit_ok: reject
+#     transmission:
+#       host: transmission
+#       port: 9091
+#       username: ${TRANSMISSION_USER}
+#       password: ${TRANSMISSION_PASS}
+#       action: purge
