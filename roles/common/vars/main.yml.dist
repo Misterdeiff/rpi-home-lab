@@ -16,6 +16,11 @@ USER_PATH: /home/{{ USER }}
 TIMEZONE: Europe/Madrid
 PUID: 1000 # Run id -u in Raspberry
 PGID: 1000 # Run id -g in Raspberry
+DIRECTORY_STRUCTURE:
+  - shared/torrents/movies
+  - shared/torrents/series
+  - shared/media/movies
+  - shared/media/series
 
 # SAMBA documents
 SAMBA:

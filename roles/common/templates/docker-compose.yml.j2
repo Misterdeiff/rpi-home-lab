@@ -10,8 +10,8 @@ services:
       -u "{{ user.USER }};{{ user.PASS }}"
       -s "{{ user.USER }};/{{ user.USER }};yes;no"
       {% endfor -%}
-      -s "Media;/Media;yes;no"
-      -s "Downloads;/Downloads;yes;no"
+      -s "media;/media;yes;no"
+      -s "torrents;/torrents;yes;no"
       -s "TimeMachine;/TimeMachine;yes;no"
     stdin_open: true
     tty: true
@@ -21,8 +21,8 @@ services:
       - 139:139
       - 445:445
     volumes:
-      - {{ STORAGE }}/Media:/Media
-      - {{ STORAGE }}/Downloads:/Downloads
+      - {{ STORAGE }}/shared/media:/media
+      - {{ STORAGE }}/shared/torrents:/torrents
       - {{ DRIVES[1]['MOUNT'] }}:/TimeMachine
       {% for user in SAMBA -%}
       - {{ STORAGE }}/files/{{ user.USER }}:/files/{{ user.USER }}
@@ -41,7 +41,7 @@ services:
       - TZ={{ TIMEZONE }}
     volumes:
       - {{ STORAGE }}/docker/Plex Media Server:/root/Library/Application Support/Plex Media Server
-      - {{ STORAGE }}/Media:/media
+      - {{ STORAGE }}/shared/media:/media
 
 {#  transmission: #}
 {#    image : jaymoulin/transmission:4.0.4-arm64v8 #}
@@ -50,7 +50,7 @@ services:
 {#    command: transmission-daemon -f -g /config #}
 {#    volumes: #}
 {#      - {{ STORAGE }}/docker/transmission:/config #}
-{#      - {{ STORAGE }}/Downloads:/Downloads #}
+{#      - {{ STORAGE }}/shared/torrents:/torrents #}
 {#    ports: #}
 {#      - 9091:9091 #}
 {#      - 51413:51413 #}
@@ -65,8 +65,8 @@ services:
 {#    volumes: #}
 {#      - {{ STORAGE }}/docker/flexget:/config #}
 {#      - {{ STORAGE }}/docker/flexget/custom-cont-init.d:/custom-cont-init.d #}
-{#      - {{ STORAGE }}/Downloads:/Downloads #}
-{#      - {{ STORAGE }}/Media:/storage #}
+{#      - {{ STORAGE }}/shared/torrents:/torrents #}
+{#      - {{ STORAGE }}/shared/media:/media #}
 {#    ports: #}
 {#      - 5050:5050 #}
 {#    environment: #}
@@ -99,8 +99,7 @@ services:
       - TZ={{ TIMEZONE }}
     volumes:
       - {{ STORAGE }}/docker/radarr:/config
-      - {{ STORAGE }}/Media/Movies:/movies
-      - {{ STORAGE }}/Downloads:/downloads
+      - {{ STORAGE }}/shared:/shared
     ports:
       - 7878:7878
     restart: unless-stopped
