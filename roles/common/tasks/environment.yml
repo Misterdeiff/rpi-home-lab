@@ -34,14 +34,15 @@
   command: mount -a
   tags: mount-disk
 
-- name: Copy Flexget files
+- name: Copy Docker containers config files
   copy:
-    src: "{{ role_path }}/files/flexget"
-    dest: "{{ STORAGE }}/docker/"
-  tags: docker, docker-compose, flexget
+    src: "{{ role_path }}/files/docker"
+    dest: "{{ STORAGE }}/"
+  tags: docker, docker-compose
 
-- name: Copy Transmission files
-  copy:
-    src: "{{ role_path }}/files/transmission"
-    dest: "{{ STORAGE }}/docker/"
-  tags: docker, docker-compose, transmission
+- name: Create directory structure
+  file:
+    path: "{{ STORAGE }}/{{ item }}"
+    state: directory
+  loop: "{{ DIRECTORY_STRUCTURE }}"
+  tags: directory

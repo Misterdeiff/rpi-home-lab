@@ -22,7 +22,7 @@ services:
       - 445:445
     volumes:
       - {{ STORAGE }}/Media:/Media
-      - {{ STORAGE }}/Media/Downloads:/Downloads
+      - {{ STORAGE }}/Downloads:/Downloads
       - {{ DRIVES[1]['MOUNT'] }}:/TimeMachine
       {% for user in SAMBA -%}
       - {{ STORAGE }}/files/{{ user.USER }}:/files/{{ user.USER }}
@@ -43,36 +43,64 @@ services:
       - {{ STORAGE }}/docker/Plex Media Server:/root/Library/Application Support/Plex Media Server
       - {{ STORAGE }}/Media:/media
 
-  transmission:
-    image : jaymoulin/transmission:4.0.4-arm64v8
-    container_name: transmission
-    restart: unless-stopped
-    command: transmission-daemon -f -g /config
-    volumes:
-      - {{ STORAGE }}/docker/transmission:/config
-      - {{ STORAGE }}/Media/Downloads:/Downloads
-    ports:
-      - 9091:9091
-      - 51413:51413
-      - 51413:51413/udp
-    expose:
-      - 9091
+{#  transmission: #}
+{#    image : jaymoulin/transmission:4.0.4-arm64v8 #}
+{#    container_name: transmission #}
+{#    restart: unless-stopped #}
+{#    command: transmission-daemon -f -g /config #}
+{#    volumes: #}
+{#      - {{ STORAGE }}/docker/transmission:/config #}
+{#      - {{ STORAGE }}/Downloads:/Downloads #}
+{#    ports: #}
+{#      - 9091:9091 #}
+{#      - 51413:51413 #}
+{#      - 51413:51413/udp #}
+{#    expose: #}
+{#      - 9091 #}
 
-  flexget:
-    image: wiserain/flexget:3.7.7
-    container_name: flexget
-    restart: unless-stopped
-    volumes:
-      - {{ STORAGE }}/docker/flexget:/config
-      - {{ STORAGE }}/docker/flexget/custom-cont-init.d:/custom-cont-init.d
-      - {{ STORAGE }}/Media/Downloads:/Downloads
-      - {{ STORAGE }}/Media:/storage
-    ports:
-      - 5050:5050
+{#  flexget: #}
+{#    image: wiserain/flexget:3.7.7 #}
+{#    container_name: flexget #}
+{#    restart: unless-stopped #}
+{#    volumes: #}
+{#      - {{ STORAGE }}/docker/flexget:/config #}
+{#      - {{ STORAGE }}/docker/flexget/custom-cont-init.d:/custom-cont-init.d #}
+{#      - {{ STORAGE }}/Downloads:/Downloads #}
+{#      - {{ STORAGE }}/Media:/storage #}
+{#    ports: #}
+{#      - 5050:5050 #}
+{#    environment: #}
+{#      - PUID={{ PUID }} #}
+{#      - PGID={{ PGID }} #}
+{#      - TORRENT_PLUGIN=transmission #}
+{#      - FG_WEBUI_PASSWD={{ FLEXGET_PASS }} #}
+{#    links: #}
+{#      - transmission #}
+
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
     environment:
       - PUID={{ PUID }}
       - PGID={{ PGID }}
-      - TORRENT_PLUGIN=transmission
-      - FG_WEBUI_PASSWD={{ FLEXGET_PASS }}
-    links:
-      - transmission
+      - TZ={{ TIMEZONE }}
+    volumes:
+      - {{ STORAGE }}/docker/overseerr:/config
+    ports:
+      - 5055:5055
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
+      - TZ={{ TIMEZONE }}
+    volumes:
+      - {{ STORAGE }}/docker/radarr:/config
+      - {{ STORAGE }}/Media/Movies:/movies
+      - {{ STORAGE }}/Downloads:/downloads
+    ports:
+      - 7878:7878
+    restart: unless-stopped
