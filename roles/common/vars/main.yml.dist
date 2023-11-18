@@ -28,16 +28,3 @@ SAMBA:
     PASS: 123456
   - USER: USER2
     PASS: 123456
-
-#Flexget
-FLEXGET_USER: test
-FLEXGET_PASS: test
-
-#Transmission
-TRANSMISSION_USER: admin
-TRANSMISSION_PASS: test
-TRANSMISSION_RSS: https://rarbg.to/rssdd.php 
-
-#Trackt
-TRACKT_USER: usuario-trackt
-TRACKT_ACCOUT: cuenta-trackt

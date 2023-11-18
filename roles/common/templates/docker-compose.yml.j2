@@ -41,41 +41,25 @@ services:
       - TZ={{ TIMEZONE }}
     volumes:
       - {{ STORAGE }}/docker/Plex Media Server:/root/Library/Application Support/Plex Media Server
-      - {{ STORAGE }}/shared/media:/media
+      - {{ STORAGE }}/shared/media:/shared/media
 
-{#  transmission: #}
-{#    image : jaymoulin/transmission:4.0.4-arm64v8 #}
-{#    container_name: transmission #}
-{#    restart: unless-stopped #}
-{#    command: transmission-daemon -f -g /config #}
-{#    volumes: #}
-{#      - {{ STORAGE }}/docker/transmission:/config #}
-{#      - {{ STORAGE }}/shared/torrents:/torrents #}
-{#    ports: #}
-{#      - 9091:9091 #}
-{#      - 51413:51413 #}
-{#      - 51413:51413/udp #}
-{#    expose: #}
-{#      - 9091 #}
-
-{#  flexget: #}
-{#    image: wiserain/flexget:3.7.7 #}
-{#    container_name: flexget #}
-{#    restart: unless-stopped #}
-{#    volumes: #}
-{#      - {{ STORAGE }}/docker/flexget:/config #}
-{#      - {{ STORAGE }}/docker/flexget/custom-cont-init.d:/custom-cont-init.d #}
-{#      - {{ STORAGE }}/shared/torrents:/torrents #}
-{#      - {{ STORAGE }}/shared/media:/media #}
-{#    ports: #}
-{#      - 5050:5050 #}
-{#    environment: #}
-{#      - PUID={{ PUID }} #}
-{#      - PGID={{ PGID }} #}
-{#      - TORRENT_PLUGIN=transmission #}
-{#      - FG_WEBUI_PASSWD={{ FLEXGET_PASS }} #}
-{#    links: #}
-{#      - transmission #}
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
+      - TZ={{ TIMEZONE }}
+      - UMASK_SET=022
+      - WEBUI_PORT=8080
+    volumes:
+      - {{ STORAGE }}/docker/qbittorrent:/config
+      - {{ STORAGE }}/shared/torrents:/shared/torrents
+    ports:
+      - 8080:8080
+      - 6881:6881
+      - 6881:6881/udp
+    restart: unless-stopped
 
   overseerr:
     image: lscr.io/linuxserver/overseerr:latest
@@ -97,9 +81,65 @@ services:
       - PUID={{ PUID }}
       - PGID={{ PGID }}
       - TZ={{ TIMEZONE }}
+      - UMASK_SET=022
     volumes:
       - {{ STORAGE }}/docker/radarr:/config
       - {{ STORAGE }}/shared:/shared
     ports:
       - 7878:7878
     restart: unless-stopped
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
+      - TZ={{ TIMEZONE }}
+      - UMASK_SET=022
+    volumes:
+      - {{ STORAGE }}/docker/sonarr:/config
+      - {{ STORAGE }}/shared:/shared
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
+      - TZ={{ TIMEZONE }}
+      - UMASK_SET=022
+    volumes:
+      - {{ STORAGE }}/docker/bazarr:/config
+      - {{ STORAGE }}/shared:/shared
+    ports:
+      - 6767:6767
+    restart: unless-stopped
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
+      - TZ={{ TIMEZONE }}
+    volumes:
+      - {{ STORAGE }}/docker/prowlarr:/config
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ={{ TIMEZONE }}
+    ports:
+      - "${PORT:-8191}:8191"
+    restart: unless-stopped 

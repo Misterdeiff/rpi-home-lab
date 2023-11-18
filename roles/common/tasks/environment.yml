@@ -38,7 +38,7 @@
   copy:
     src: "{{ role_path }}/files/docker"
     dest: "{{ STORAGE }}/"
-  tags: docker, docker-compose
+  tags: docker, docker-compose, copydocker
 
 - name: Create directory structure
   file:

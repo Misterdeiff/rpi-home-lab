@@ -71,8 +71,9 @@ Save TimeMachine backups on samba shared folders.
 2. Configure your folders
 3. Add server in your end device
 
-## Transmission
-Download Google Chrome extension "Transmission easy client". This plugin allows you to access to the WEB GUI <Raspberry_Pi_IP>:9091/transmission/web/#files
+## QBitorrent
+Torrent downloader
+
 
 # Improvements
 - Install PiHole
