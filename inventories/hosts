@@ -1,0 +1,2 @@
+[lab]
+rpi ansible_host=rpi.local ansible_user=dsarrias

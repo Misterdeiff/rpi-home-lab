@@ -1,0 +1,24 @@
+- name: Generate docker-compose.yml file and copy it
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ USER_PATH }}/docker-compose.yml"
+  tags: docker, docker-compose
+
+- name: Append a line to docker file to store temps in disk
+  lineinfile:
+    path: /etc/default/docker
+    line: export DOCKER_TMPDIR="{{ STORAGE }}/tmp/docker"
+    insertafter: EOF
+  tags: docker
+
+- name: Add my user to Docker
+  command: "sudo usermod -a -G docker {{ USER }}"
+  tags: docker
+
+- name: Stop Docker
+  command: sudo docker-compose down
+  tags: docker, docker-compose
+
+- name: Start Docker
+  command: sudo COMPOSE_HTTP_TIMEOUT=200 docker-compose up -d
+  tags: docker, docker-compose

@@ -1,0 +1,48 @@
+- name: Copy aliases
+  copy: 
+    src=.bash_aliases 
+    dest="{{ USER_PATH }}/.bash_aliases"
+  tags: aliases
+
+- name: Create mount point directories
+  become: true
+  file:
+    path: "{{ item.MOUNT }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  loop: "{{ DRIVES }}"
+  when: not (item.MOUNT is exists)
+  tags: mount-disk
+
+- name: Append disks config to fstab
+  become: true
+  blockinfile:
+    path: /etc/fstab
+    block: |
+      {% for drive in DRIVES %}
+      UUID={{ drive.UUID }} {{ drive.MOUNT }} {{ drive.FS }} defaults 0 0
+      {% endfor %}
+    state: present
+    create: yes
+    insertafter: EOF
+  tags: mount-disk
+
+- name: Mount disks
+  become: true
+  command: mount -a
+  tags: mount-disk
+
+- name: Copy Docker containers config files
+  copy:
+    src: "{{ role_path }}/files/docker"
+    dest: "{{ STORAGE }}/"
+  tags: docker, docker-compose, copydocker
+
+- name: Create directory structure
+  file:
+    path: "{{ STORAGE }}/{{ item }}"
+    state: directory
+  loop: "{{ DIRECTORY_STRUCTURE }}"
+  tags: directory

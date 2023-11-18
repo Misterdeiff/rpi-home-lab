@@ -1,0 +1,76 @@
+- name: Include common variables
+  include_vars:
+    file: "{{ playbook_dir }}/roles/common/vars/main.yml"
+    
+- name: "Update Apt Cache"
+  apt: 
+    update_cache: yes
+  tags: installation
+
+- name: "Install Common packages"
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - vim
+    - curl
+    - zsh
+    - git
+    - apt-transport-https
+    - ca-certificates
+    - ntfs-3g
+    - gnupg2
+    - fail2ban
+    - software-properties-common
+    - python3-venv
+  tags: installation, packages
+
+- name: Get Docker key
+  shell: curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+  tags: docker
+
+- name: Add Docker key
+  command: sudo apt-key fingerprint 0EBFCD88
+  tags: docker
+
+- name: Add Docker repository to docker.list
+  shell: |
+    echo "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | 
+    sudo tee /etc/apt/sources.list.d/docker.list
+  tags: docker
+
+- name: Install docker-ce and docker-compose
+  shell: sudo apt-get update && sudo apt-get install -y --no-install-recommends docker-ce docker-compose
+  tags: docker
+
+- name: Install Argon fan script
+  shell: curl https://download.argon40.com/argon1.sh | bash
+  tags: argon
+
+# ZSH
+- name: Install Oh My Zsh
+  become_user: "{{ USER }}"
+  git:
+    repo: https://github.com/ohmyzsh/ohmyzsh.git
+    dest: ~/.oh-my-zsh
+    clone: yes
+  tags: packages, zsh
+
+- name: Generate zshrc file and copy it
+  become_user: "{{ USER }}"
+  template:
+    src: zshrc.j2
+    dest: "~/.zshrc"
+  tags: packages, zsh
+
+- name: Install Powerlevel10k theme
+  become_user: "{{ USER }}"
+  git:
+    repo: https://github.com/romkatv/powerlevel10k.git
+    dest: ~/.oh-my-zsh/custom/themes/powerlevel10k
+  tags: packages, zsh
+
+- name: Set Zsh as default shell
+  become: true
+  shell: chsh -s "$(which zsh)" {{ USER }}
+  tags: packages, zsh
