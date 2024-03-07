@@ -12,7 +12,7 @@ services:
       {% endfor -%}
       -s "media;/media;yes;no"
       -s "torrents;/torrents;yes;no"
-      -s "TimeMachine;/TimeMachine;yes;no"
+      -s "backup;/backup;yes;no"
     stdin_open: true
     tty: true
     environment:
@@ -23,7 +23,7 @@ services:
     volumes:
       - {{ STORAGE }}/shared/media:/media
       - {{ STORAGE }}/shared/torrents:/torrents
-      - {{ DRIVES[1]['MOUNT'] }}:/TimeMachine
+      - {{ DRIVES[1]['MOUNT'] }}:/backup
       {% for user in SAMBA -%}
       - {{ STORAGE }}/files/{{ user.USER }}:/files/{{ user.USER }}
       {% endfor %}
@@ -142,3 +142,20 @@ services:
     ports:
       - "${PORT:-8191}:8191"
     restart: unless-stopped 
+
+  duplicati:
+    image: lscr.io/linuxserver/duplicati:latest
+    container_name: duplicati
+    environment:
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
+      - TZ={{ TIMEZONE }}
+      - UMASK=022
+    volumes:
+      - {{ STORAGE }}/docker/duplicati:/config
+      - {{ BACKUP }}/duplicati:/backups
+      - {{ STORAGE }}/docker:/data/docker
+      - {{ STORAGE }}/files:/data/files
+    ports:
+      - 8200:8200
+    restart: unless-stopped

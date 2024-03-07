@@ -5,7 +5,7 @@ DRIVES:
     MOUNT: /mnt/data
     FS: ntfs
   - UUID: UUID_DISK2
-    MOUNT: /mnt/timemachine
+    MOUNT: /mnt/backup
     FS: ntfs
 
 # General
