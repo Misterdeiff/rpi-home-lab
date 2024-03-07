@@ -43,24 +43,23 @@ services:
       - {{ STORAGE }}/docker/Plex Media Server:/root/Library/Application Support/Plex Media Server
       - {{ STORAGE }}/shared/media:/shared/media
 
-  qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
-    container_name: qbittorrent
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
     environment:
       - PUID={{ PUID }}
       - PGID={{ PGID }}
       - TZ={{ TIMEZONE }}
       - UMASK_SET=022
-      - WEBUI_PORT=8080
     volumes:
-      - {{ STORAGE }}/docker/qbittorrent:/config
+      - {{ STORAGE }}/docker/transmission:/config
       - {{ STORAGE }}/shared/torrents:/shared/torrents
     ports:
-      - 8080:8080
-      - 6881:6881
-      - 6881:6881/udp
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
     restart: unless-stopped
-
+    
   overseerr:
     image: lscr.io/linuxserver/overseerr:latest
     container_name: overseerr
