@@ -103,21 +103,6 @@ services:
       - 8989:8989
     restart: unless-stopped
 
-  bazarr:
-    image: lscr.io/linuxserver/bazarr:latest
-    container_name: bazarr
-    environment:
-      - PUID={{ PUID }}
-      - PGID={{ PGID }}
-      - TZ={{ TIMEZONE }}
-      - UMASK_SET=022
-    volumes:
-      - {{ STORAGE }}/docker/bazarr:/config
-      - {{ STORAGE }}/shared:/shared
-    ports:
-      - 6767:6767
-    restart: unless-stopped
-
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
