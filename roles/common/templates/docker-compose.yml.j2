@@ -25,7 +25,7 @@ services:
       - {{ STORAGE }}/shared/torrents:/torrents
       - {{ DRIVES[1]['MOUNT'] }}:/backup
       {% for user in SAMBA -%}
-      - {{ STORAGE }}/files/{{ user.USER }}:/files/{{ user.USER }}
+      - {{ STORAGE }}/files/{{ user.USER }}:/{{ user.USER }}
       {% endfor %}
 
   plex:
