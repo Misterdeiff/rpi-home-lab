@@ -126,7 +126,7 @@ services:
       - TZ={{ TIMEZONE }}
     ports:
       - "${PORT:-8191}:8191"
-    restart: unless-stopped 
+    restart: unless-stopped
 
   duplicati:
     image: lscr.io/linuxserver/duplicati:latest
@@ -143,4 +143,24 @@ services:
       - {{ STORAGE }}/files:/data/files
     ports:
       - 8200:8200
+    restart: unless-stopped
+  
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "8080:80/tcp"
+    environment:
+      - TZ={{ TIMEZONE }}
+      - WEBPASSWORD={{ PIHOLE_WEB_PASS }}
+      - DNSMASQ_LISTENING=all
+      - WEBTHEME=default-dark
+    volumes:
+      - '{{ STORAGE }}/docker/pihole/etc-pihole/:/etc/pihole/'
+      - '{{ STORAGE }}/docker/pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/'
+    cap_add:
+      - NET_ADMIN
     restart: unless-stopped

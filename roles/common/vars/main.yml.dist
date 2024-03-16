@@ -22,9 +22,11 @@ DIRECTORY_STRUCTURE:
   - shared/media/movies
   - shared/media/series
 
-# SAMBA documents
+# Containers
 SAMBA:
   - USER: USER1
     PASS: 123456
   - USER: USER2
     PASS: 123456
+
+PIHOLE_WEB_PASS: PiholePass

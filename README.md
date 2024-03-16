@@ -57,23 +57,15 @@ CPU TEMP     FAN POWER
 
 You can config different settings by using `argonone-config`. To uninstall: `argonone-uninstall`.
 
-## TimeMachine
-Save TimeMachine backups on samba shared folders.
-1. Apple menu > System Settings > General > Time Machine
-2. Add TimeMachine shared folder > Set Up Disk
-3. (Optional) Download TimeMachineEditor
-   3.1. Set backups every day
-   3.2. Do not backup during the day
-
 # Containers
 ## Plex
 1. Go to http://YOUR_IP:32400/web/index.html
 2. Configure your folders
 3. Add server in your end device
 
-## QBitorrent
-Torrent downloader
+## Pi-hole
+More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
 
-
-# Improvements
-- Install PiHole
+If NOT using it for DHCP, remove:
+- Port `67:67/udp`
+- `cap_add: - NET_ADMIN`
