@@ -21,7 +21,10 @@ DIRECTORY_STRUCTURE:
   - shared/torrents/series
   - shared/media/movies
   - shared/media/series
-
+TELEGRAM:
+  TOKEN: YOUR_TOKEN
+  CHAT_ID: 1234567
+  
 # Containers
 SAMBA:
   - USER: USER1

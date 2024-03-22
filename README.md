@@ -11,8 +11,22 @@ brew install ansible
 3. Connect your drive/s to Linux, run `lsblk -f` and find out their UUIDs
 4. Modify variables inside `roles/common/vars/main.yml`.
 5. Adjust `inventories/hosts` as needed.
-6. Connect all drives included on step #4 to your Pi. 
-7. Run all tasks in the playbook.
+6. Connect all drives included on step #4 to your Pi.
+7. (Optional) Create your own Telegram Bot for notifications from ARR apps and Watchtower
+8. Run all tasks in the playbook.
+
+### Telegram
+In order to create your own bot follow the next steps:
+1. Create a Telegram bot with `@BotFather` (the verified one)
+2. Paste your bot's token in the main.yml file and use it to create connections in the ARR apps (Overseerr, Radarr, Sonarr, Prowlarr)
+3. Use `@get_id_bot` to find your bot's Channel ID. Use it to receive the notifications in that channel for the ARR apps and Watchtower (main.yml)
+4. (Optional) Create a Telegram Channel to separate system notifications (Overseer approvals and container updates received in the bot directly) from the new Movies / TV Shows added (Telegram Channel for family and friends).
+   4.1. Create your new channel
+   4.2. Add your bot as Admin
+   4.3. Use Telegram web and access your new Channel. Get the Channel ID from the URL. It usually starts with `-100`
+   4.4. Use this Channel ID in the Connection configured in Radarr and Sonarr
+
+## Useful commands
 
 ### Get a List of Playbook Tasks
 ``` shell
@@ -69,3 +83,6 @@ More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole
 If NOT using it for DHCP, remove:
 - Port `67:67/udp`
 - `cap_add: - NET_ADMIN`
+
+## Watchtower
+- WATCHTOWER_SCHEDULE is set to execute every Sunday at 4AM
