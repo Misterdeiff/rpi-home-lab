@@ -34,15 +34,33 @@
   command: mount -a
   tags: mount-disk
 
-- name: Copy Docker containers config files
-  copy:
-    src: "{{ role_path }}/files/docker"
-    dest: "{{ STORAGE }}/"
-  tags: docker, docker-compose, copydocker
-
-- name: Create directory structure
+- name: Create Media directory structure
   file:
     path: "{{ STORAGE }}/{{ item }}"
     state: directory
-  loop: "{{ DIRECTORY_STRUCTURE }}"
+  loop: "{{ MEDIA_DIRECTORY_STRUCTURE }}"
   tags: directory
+
+- name: Create user directory structure
+  file:
+    path: "{{ USER_PATH }}/{{ item }}"
+    state: directory
+  loop: "{{ USER_DIRECTORY_STRUCTURE }}"
+  tags: directory
+
+- name: Generate telegram_notification_disk.sh file and copy it
+  template:
+    src: telegram_notification_disk.j2
+    dest: "{{ USER_PATH }}/scripts/cron/telegram_notification_disk.sh"
+    owner: root
+    group: root
+    mode: '0755'
+  tags: cron
+
+- name: Create cron job for telegram_notification_disk.sh
+  cron:
+    name: "Disk space check"
+    minute: "30"
+    hour: "4"
+    job: "{{ USER_PATH }}/scripts/cron/telegram_notification_disk.sh > /dev/null 2>&1"
+  tags: cron

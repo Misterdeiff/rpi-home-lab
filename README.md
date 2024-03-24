@@ -9,10 +9,10 @@ brew install ansible
      2.2. Add your SSH key
      2.3. Don't configure WiFi
 3. Connect your drive/s to Linux, run `lsblk -f` and find out their UUIDs
-4. Modify variables inside `roles/common/vars/main.yml`.
+4. Modify variables inside `roles/common/vars/main.yml`
 5. Adjust `inventories/hosts` as needed.
-6. Connect all drives included on step #4 to your Pi.
-7. (Optional) Create your own Telegram Bot for notifications from ARR apps and Watchtower
+6. Connect all drives included on step #4 to your Pi
+7. Create your own Telegram Bot for notifications from ARR apps, Watchtower and disk space
 8. Run all tasks in the playbook.
 
 ### Telegram
@@ -38,7 +38,7 @@ ansible-playbook -i inventories/hosts -K playbook.yml --list-tasks
 ansible-playbook -i inventories/hosts -K playbook.yml
 ```
 
-## Test changes
+### Test changes
 Use --check for a dry run and, in addition, use --diff to have a detail differences
 
 ```shell
@@ -85,4 +85,5 @@ If NOT using it for DHCP, remove:
 - `cap_add: - NET_ADMIN`
 
 ## Watchtower
+- List of arguments: https://containrrr.dev/watchtower/arguments/
 - WATCHTOWER_SCHEDULE is set to execute every Sunday at 4AM
