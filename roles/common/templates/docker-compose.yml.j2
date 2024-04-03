@@ -13,6 +13,7 @@ services:
       -s "media;/media;yes;no"
       -s "torrents;/torrents;yes;no"
       -s "backup;/backup;yes;no"
+      -s "timemachine;/timemachine;yes;no"
     stdin_open: true
     tty: true
     environment:
@@ -23,7 +24,8 @@ services:
     volumes:
       - {{ STORAGE }}/shared/media:/media
       - {{ STORAGE }}/shared/torrents:/torrents
-      - {{ DRIVES[1]['MOUNT'] }}:/backup
+      - {{ BACKUP }}:/backup
+      - {{ TIMEMACHINE }}:/timemachine
       {% for user in SAMBA -%}
       - {{ STORAGE }}/files/{{ user.USER }}:/{{ user.USER }}
       {% endfor %}
