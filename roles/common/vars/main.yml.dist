@@ -6,11 +6,18 @@ DRIVES:
     FS: ntfs
   - UUID: UUID_DISK2
     MOUNT: /mnt/backup
+    FS: exfat
+ - UUID: UUID_DISK3
+    MOUNT: /mnt/timemachine
     FS: ntfs
 
 # General
 ansible_ssh_private_key_file: ~/.ssh/authorized_keys/
 STORAGE: "{{ DRIVES[0]['MOUNT'] }}"
+BACKUP: "{{ DRIVES[1]['MOUNT'] }}"
+TIMEMACHINE: "{{ DRIVES[2]['MOUNT'] }}"
+DISK_ALERT_LIMIT: 80
+DISK_PATHS: '"/dev/sdc2" "/dev/sdc3" "/dev/sdb1" "/dev/mmcblk0p1" "/dev/mmcblk0p2"'
 USER: USER
 USER_PATH: /home/{{ USER }}
 TIMEZONE: Europe/Madrid

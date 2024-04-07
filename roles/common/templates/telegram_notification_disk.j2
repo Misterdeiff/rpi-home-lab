@@ -3,8 +3,8 @@
 # Your Telegram Bot Token and Chat ID
 BOT_TOKEN={{ TELEGRAM.TOKEN }}
 CHAT_ID={{ TELEGRAM.CHAT_ID }}
-ALERT_LIMIT=80 # Set alert threshold
-DISK_PATHS=("/dev/sda1" "/dev/sdb1" "/dev/mmcblk0p1" "/dev/mmcblk0p2") # List of disk paths to monitor
+ALERT_LIMIT= {{ DISK_ALERT_LIMIT}} # Set alert threshold
+DISK_PATHS=({{ DISK_PATHS }}) # List of disk paths to monitor
 
 # Function to send notification to Telegram
 send_telegram() {
