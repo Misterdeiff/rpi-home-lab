@@ -50,6 +50,12 @@ ansible-playbook -i inventories/hosts -K playbook.yml -t docker --check --diff
 ansible-playbook -i inventories/hosts -K playbook.yml -t docker
 ```
 
+### Copy docker-compose.yml and restart only the specified container
+```shell
+ansible-playbook -i inventories/hosts -K playbook.yml -t container -e "container=samba"
+```
+
+
 # Tools
 ## Argon Case
 More info: https://wagnerstechtalk.com/argonone/

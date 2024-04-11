@@ -2,7 +2,7 @@
   template:
     src: docker-compose.yml.j2
     dest: "{{ USER_PATH }}/docker-compose.yml"
-  tags: docker, docker-compose
+  tags: docker, docker-compose, container
 
 - name: Append a line to docker file to store temps in disk
   lineinfile:
@@ -22,3 +22,8 @@
 - name: Start Docker
   command: sudo COMPOSE_HTTP_TIMEOUT=200 docker-compose up -d
   tags: docker, docker-compose
+
+- name: Restart Docker Container
+  shell: sudo docker-compose restart {{ container }}
+  when: container is defined
+  tags: container
