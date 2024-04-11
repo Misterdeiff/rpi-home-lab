@@ -129,23 +129,6 @@ services:
     ports:
       - "${PORT:-8191}:8191"
     restart: unless-stopped
-
-  duplicati:
-    image: lscr.io/linuxserver/duplicati:latest
-    container_name: duplicati
-    environment:
-      - PUID={{ PUID }}
-      - PGID={{ PGID }}
-      - TZ={{ TIMEZONE }}
-      - UMASK=022
-    volumes:
-      - {{ STORAGE }}/docker/duplicati:/config
-      - {{ BACKUP }}/duplicati:/backups
-      - {{ STORAGE }}/docker:/data/docker
-      - {{ STORAGE }}/files:/data/files
-    ports:
-      - 8200:8200
-    restart: unless-stopped
   
   pihole:
     container_name: pihole
@@ -185,4 +168,30 @@ services:
       - TZ={{ TIMEZONE }}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  kopia:
+    image: kopia/kopia:latest
+    hostname: kopia
+    container_name: kopia
+    ports:
+        - 51515:51515
+    command:
+        - server
+        - start
+        - --disable-csrf-token-checks
+        - --insecure
+        - --address=0.0.0.0:51515
+        - --server-username={{CONTAINER_USER}}
+        - --server-password={{KOPIA_PASS}}
+    environment:
+        USER: {{ CONTAINER_USER }}
+        KOPIA_PASSWORD: {{ KOPIA_PASS }}
+    volumes:
+        - {{ STORAGE }}/docker/kopia/config:/app/config
+        - {{ STORAGE }}/docker/kopia/cache:/app/cache
+        - {{ STORAGE }}/docker/kopia/logs:/app/logs
+        - {{ STORAGE }}/docker:/data/docker:ro
+        - {{ STORAGE }}/files:/data/files:ro
+        - {{ BACKUP }}/kopia:/backups:shared
     restart: unless-stopped
