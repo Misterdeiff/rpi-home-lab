@@ -181,12 +181,15 @@ services:
         - start
         - --disable-csrf-token-checks
         - --insecure
+        - --enable-actions
         - --address=0.0.0.0:51515
         - --server-username={{CONTAINER_USER}}
-        - --server-password={{KOPIA_PASS}}
+        - --server-password={{KOPIA_UI_PASS}}
     environment:
+        TZ: {{ TIMEZONE }}
         USER: {{ CONTAINER_USER }}
-        KOPIA_PASSWORD: {{ KOPIA_PASS }}
+        KOPIA_PASSWORD: {{ KOPIA_REPO_PASS }}
+        KOPIA_PERSIST_CREDENTIALS_ON_CONNECT: "true"
     volumes:
         - {{ STORAGE }}/docker/kopia/config:/app/config
         - {{ STORAGE }}/docker/kopia/cache:/app/cache
@@ -194,4 +197,5 @@ services:
         - {{ STORAGE }}/docker:/data/docker:ro
         - {{ STORAGE }}/files:/data/files:ro
         - {{ BACKUP }}/kopia:/backups:shared
+        - {{ USER_PATH }}/scripts:/scripts:ro
     restart: unless-stopped

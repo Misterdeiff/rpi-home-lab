@@ -64,3 +64,12 @@
     hour: "4"
     job: "{{ USER_PATH }}/scripts/cron/telegram_notification_disk.sh > /dev/null 2>&1"
   tags: cron
+
+- name: Generate telegram_notification_argument.sh file and copy it
+  template:
+    src: telegram_notification_argument.j2
+    dest: "{{ USER_PATH }}/scripts/telegram_notification_argument.sh"
+    owner: root
+    group: root
+    mode: '0755'
+  tags: telegram
