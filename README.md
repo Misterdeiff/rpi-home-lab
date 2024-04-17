@@ -93,3 +93,6 @@ If NOT using it for DHCP, remove:
 ## Watchtower
 - List of arguments: https://containrrr.dev/watchtower/arguments/
 - WATCHTOWER_SCHEDULE is set to execute every Sunday at 4AM
+
+## Kopia
+- Server start commands: https://kopia.io/docs/reference/command-line/common/server-start/

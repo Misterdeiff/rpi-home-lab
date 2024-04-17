@@ -45,6 +45,20 @@ services:
       - {{ STORAGE }}/docker/Plex Media Server:/root/Library/Application Support/Plex Media Server
       - {{ STORAGE }}/shared/media:/shared/media
 
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    environment:
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
+      - TZ={{ TIMEZONE }}
+      - UMASK_SET=022
+    volumes:
+      - {{ STORAGE }}/docker/tautulli:/config
+    ports:
+      - 8181:8181
+    restart: unless-stopped
+
   transmission:
     image: lscr.io/linuxserver/transmission:latest
     container_name: transmission
@@ -154,7 +168,7 @@ services:
     container_name: watchtower
     image: containrrr/watchtower:latest
     ports:
-      - 8181:8080
+      - 8282:8080
     environment:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_INCLUDE_RESTARTING=true
