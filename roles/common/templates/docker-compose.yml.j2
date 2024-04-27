@@ -213,3 +213,20 @@ services:
         - {{ BACKUP }}/kopia:/backups:shared
         - {{ USER_PATH }}/scripts:/scripts:ro
     restart: unless-stopped
+
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    container_name: nextcloud
+    environment:
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
+      - TZ={{ TIMEZONE }}
+      - UMASK=022
+    volumes:
+      - {{ STORAGE }}/docker/nextcloud:/config
+      {% for user in SAMBA -%}
+      - {{ STORAGE }}/files/{{ user.USER }}/cloud:/{{ user.USER }}
+      {% endfor %}
+    ports:
+      - 4443:443
+    restart: unless-stopped
