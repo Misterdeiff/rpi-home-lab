@@ -12,7 +12,7 @@
   tags: docker, docker-compose, docker-compose-restart, container
 
 - name: Stop Docker
-  command: sudo docker-compose down
+  command: sudo docker-compose down --remove-orphans
   tags: docker, docker-compose-restart
 
 - name: Start Docker
