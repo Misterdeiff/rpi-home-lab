@@ -1,5 +1,6 @@
 ---
 # tasks file for roles/common
 - import_tasks: install_tools.yml
+- import_tasks: disks.yml
+- import_tasks: docker.yml
 - import_tasks: environment.yml
-- import_tasks: configure.yml
