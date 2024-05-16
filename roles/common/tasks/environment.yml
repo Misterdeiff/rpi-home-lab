@@ -29,3 +29,15 @@
     group: root
     mode: '0755'
   tags: telegram
+
+- name: Copy Tailscale reverse proxy config files
+  copy: 
+    src=tailscale.json 
+    dest="{{ STORAGE }}/docker/tailscale/config/tailscale.json"
+  tags: ts
+
+- name: Copy Caddyfile config
+  copy: 
+    src=Caddyfile 
+    dest="{{ STORAGE }}/docker/caddy/Caddyfile"
+  tags: caddy

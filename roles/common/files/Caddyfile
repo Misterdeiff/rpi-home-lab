@@ -1,0 +1,17 @@
+(cloudflare) {
+	tls {
+		dns cloudflare {$CLOUDFLARE_TOKEN}
+	}
+}
+
+#Overseerr
+overseerr.{$DNS_DOMAIN} {
+	reverse_proxy 127.0.0.1:5055
+	import cloudflare
+}
+
+#Plex
+plex.{$DNS_DOMAIN} {
+	reverse_proxy 127.0.0.1:32400
+	import cloudflare
+}

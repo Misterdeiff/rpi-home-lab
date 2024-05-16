@@ -2,6 +2,7 @@ version: "3.8"
 
 networks:
   arr:
+  proxy:
 
 services:
   samba:
@@ -84,16 +85,32 @@ services:
   overseerr:
     image: lscr.io/linuxserver/overseerr:latest
     container_name: overseerr
-    networks:
-      - arr
+    network_mode: service:ts-overseerr
     environment:
       - PUID={{ PUID }}
       - PGID={{ PGID }}
       - TZ={{ TIMEZONE }}
     volumes:
       - {{ STORAGE }}/docker/overseerr:/config
-    ports:
-      - 5055:5055
+    restart: unless-stopped
+    depends_on: 
+      - ts-overseerr
+
+  ts-overseerr:
+    image: tailscale/tailscale:latest
+    container_name: ts-overseerr
+    hostname: ts-overseerr
+    environment:
+      - TS_AUTHKEY={{ TAILSCALE_AUTHKEY }}?ephemeral=false
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_EXTRA_ARGS=--advertise-tags=tag:container
+    volumes:
+      - {{ STORAGE }}/docker/ts-overseerr/state:/var/lib/tailscale
+      - {{ STORAGE }}/docker/ts-overseerr/config:/config
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
     restart: unless-stopped
 
   radarr:
@@ -227,4 +244,42 @@ services:
         - {{ STORAGE }}/files:/data/files:ro
         - {{ BACKUP }}/kopia:/backups:shared
         - {{ USER_PATH }}/scripts:/scripts:ro
+    restart: unless-stopped
+
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: tailscale
+    hostname: tailscale
+    networks:
+      - proxy
+    environment:
+      - TS_AUTHKEY={{ TAILSCALE_AUTHKEY }}?ephemeral=false
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_EXTRA_ARGS=--advertise-tags=tag:container
+    volumes:
+      - {{ STORAGE }}/docker/tailscale/state:/var/lib/tailscale
+      - {{ STORAGE }}/docker/tailscale/config:/config
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
+  
+  caddy:
+    image: serfriz/caddy-cloudflare:latest
+    container_name: caddy
+    network_mode: service:tailscale
+    depends_on:
+      - tailscale
+    environment:
+      - CLOUDFLARE_TOKEN={{ CLOUDFLARE_API_TOKEN }}
+      - DNS_DOMAIN={{ DNS_DOMAIN }}
+      - HOST_IP={{ HOST_IP }}
+    volumes:
+      - {{ STORAGE }}/docker/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - {{ STORAGE }}/docker/caddy/site:/srv
+      - {{ STORAGE }}/docker/caddy/data:/data
+      - {{ STORAGE }}/docker/caddy/config:/config
+    cap_add:
+      - NET_ADMIN
     restart: unless-stopped
