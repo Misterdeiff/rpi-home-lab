@@ -96,3 +96,28 @@ If NOT using it for DHCP, remove:
 
 ## Kopia
 - Server start commands: https://kopia.io/docs/reference/command-line/common/server-start/
+
+## Tailscale
+VPN access to your home network
+
+1. Create an account and download the app on your client devices: https://tailscale.com/
+2. Once the tailscale container is up, access the [Tailscale dashboard > Machines](https://login.tailscale.com/admin/machines) > Options (in Tailscale machine) > Edit route settings > Check the shared subnet > Save
+3. DNS > Nameservers > Add nameserver > Enter the internal IP of your server (Pi-hole should be running)
+4. Access Controls - Ensure you have the next config.
+   
+   This config creates a group `admin` where you are included by email. It also adds a `container` tag to be used in the tailscale container. The ACL allows only your group to access your private network, adjust it to your needs. See more examples [here](https://tailscale.com/kb/1019/subnets#add-access-rules-for-the-advertised-subnet-routes):
+   ```
+   "groups": {
+		"group:admin": ["YOUR_EMAIL"],
+	},
+	"tagOwners": {
+		"tag:container": ["autogroup:admin"],
+	},
+   "acls": [
+		{
+			"action": "accept",
+			"src":    ["group:admin", "*"],
+			"dst":    ["192.168.0.0/24:*"],
+		},
+	],
+   ```
