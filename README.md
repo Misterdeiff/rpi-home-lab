@@ -13,7 +13,8 @@ brew install ansible
 5. Adjust `inventories/hosts` as needed.
 6. Connect all drives included on step #4 to your Pi
 7. Create your own Telegram Bot for notifications from ARR apps, Watchtower and disk space
-8. Run all tasks in the playbook.
+8. Follow the steps under Tailscale container to get the `TAILSCALE_AUTHKEY`
+9. Run all tasks in the playbook.
 
 ### Telegram
 In order to create your own bot follow the next steps:
@@ -101,9 +102,7 @@ If NOT using it for DHCP, remove:
 VPN access to your home network
 
 1. Create an account and download the app on your client devices: https://tailscale.com/
-2. Once the tailscale container is up, access the [Tailscale dashboard > Machines](https://login.tailscale.com/admin/machines) > Options (in Tailscale machine) > Edit route settings > Check the shared subnet > Save
-3. DNS > Nameservers > Add nameserver > Enter the internal IP of your server (Pi-hole should be running)
-4. Access Controls - Ensure you have the next config.
+2. Access Controls - Ensure you have the next config.
    
    This config creates a group `admin` where you are included by email. It also adds a `container` tag to be used in the tailscale container. The ACL allows only your group to access your private network, adjust it to your needs. See more examples [here](https://tailscale.com/kb/1019/subnets#add-access-rules-for-the-advertised-subnet-routes):
    ```
@@ -121,3 +120,11 @@ VPN access to your home network
 		},
 	],
    ```
+3. Settings > oAuth Clients > Create oAuth Client
+   3.1. Add a description to identify the client e.i. "home_server"
+   3.2. Mark Devices Read and Write
+   3.3. Add tags > tag:container
+   3.4. Generate Client
+4. Add the token to the main.yml environment variable list
+5. Once the tailscale container is up, access the [Tailscale dashboard > Machines](https://login.tailscale.com/admin/machines) > Options (in Tailscale machine) > Edit route settings > Check the shared subnet > Save
+6. DNS > Nameservers > Add nameserver > Enter the internal IP of your server (Pi-hole should be running)
