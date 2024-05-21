@@ -1,4 +1,3 @@
-.bash*
 .profile*
 .ssh*
 .vim*
@@ -6,5 +5,4 @@
 *.log
 .DS_Store
 .env
-files/docker/*
 roles/common/vars/main.yml
