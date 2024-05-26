@@ -64,7 +64,7 @@
 - name: Generate zshrc file and copy it
   become_user: "{{ USER }}"
   template:
-    src: zshrc.j2
+    src: zshrc
     dest: "~/.zshrc"
   tags: packages, zsh
 
