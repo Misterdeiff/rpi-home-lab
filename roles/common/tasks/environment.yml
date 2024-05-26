@@ -6,7 +6,7 @@
 
 - name: Generate telegram_notification_disk.sh file and copy it
   template:
-    src: telegram_notification_disk.j2
+    src: telegram_notification_disk.sh
     dest: "{{ USER_PATH }}/scripts/cron/telegram_notification_disk.sh"
     owner: root
     group: root
@@ -23,7 +23,7 @@
 
 - name: Generate telegram_notification_argument.sh file and copy it
   template:
-    src: telegram_notification_argument.j2
+    src: telegram_notification_argument.sh
     dest: "{{ USER_PATH }}/scripts/telegram_notification_argument.sh"
     owner: root
     group: root

@@ -1,8 +1,3 @@
-version: "3.8"
-
-networks:
-  arr:
-
 services:
   samba:
     image: dperson/samba
@@ -25,10 +20,10 @@ services:
       - 139:139
       - 445:445
     volumes:
-      - {{ STORAGE }}/shared/media:/media
-      - {{ STORAGE }}/shared/torrents:/torrents
-      - {{ BACKUP }}:/backup
-      - {{ TIMEMACHINE }}:/timemachine
+      - "{{ STORAGE }}/shared/media:/media"
+      - "{{ STORAGE }}/shared/torrents:/torrents"
+      - "{{ BACKUP }}:/backup"
+      - "{{ TIMEMACHINE }}:/timemachine"
       {% for user in SAMBA -%}
       - {{ STORAGE }}/files/{{ user.USER }}:/{{ user.USER }}
       {% endfor %}
@@ -45,8 +40,8 @@ services:
       - VERSION=docker
       - TZ={{ TIMEZONE }}
     volumes:
-      - {{ STORAGE }}/docker/Plex Media Server:/root/Library/Application Support/Plex Media Server
-      - {{ STORAGE }}/shared/media:/shared/media
+      - "{{ STORAGE }}/docker/Plex Media Server:/root/Library/Application Support/Plex Media Server"
+      - "{{ STORAGE }}/shared/media:/shared/media"
 
   tautulli:
     image: lscr.io/linuxserver/tautulli:latest
@@ -57,7 +52,7 @@ services:
       - TZ={{ TIMEZONE }}
       - UMASK_SET=022
     volumes:
-      - {{ STORAGE }}/docker/tautulli:/config
+      - "{{ STORAGE }}/docker/tautulli:/config"
     ports:
       - 8181:8181
     restart: unless-stopped
@@ -73,8 +68,8 @@ services:
       - TZ={{ TIMEZONE }}
       - UMASK_SET=022
     volumes:
-      - {{ STORAGE }}/docker/transmission:/config
-      - {{ STORAGE }}/shared/torrents:/shared/torrents
+      - "{{ STORAGE }}/docker/transmission:/config"
+      - "{{ STORAGE }}/shared/torrents:/shared/torrents"
     ports:
       - 9091:9091
       - 51413:51413
@@ -91,7 +86,7 @@ services:
       - PGID={{ PGID }}
       - TZ={{ TIMEZONE }}
     volumes:
-      - {{ STORAGE }}/docker/overseerr:/config
+      - "{{ STORAGE }}/docker/overseerr:/config"
     ports:
       - 5055:5055
     restart: unless-stopped
@@ -107,8 +102,8 @@ services:
       - TZ={{ TIMEZONE }}
       - UMASK_SET=022
     volumes:
-      - {{ STORAGE }}/docker/radarr:/config
-      - {{ STORAGE }}/shared:/shared
+      - "{{ STORAGE }}/docker/radarr:/config"
+      - "{{ STORAGE }}/shared:/shared"
     ports:
       - 7878:7878
     restart: unless-stopped
@@ -124,8 +119,8 @@ services:
       - TZ={{ TIMEZONE }}
       - UMASK_SET=022
     volumes:
-      - {{ STORAGE }}/docker/sonarr:/config
-      - {{ STORAGE }}/shared:/shared
+      - "{{ STORAGE }}/docker/sonarr:/config"
+      - "{{ STORAGE }}/shared:/shared"
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -140,7 +135,7 @@ services:
       - PGID={{ PGID }}
       - TZ={{ TIMEZONE }}
     volumes:
-      - {{ STORAGE }}/docker/prowlarr:/config
+      - "{{ STORAGE }}/docker/prowlarr:/config"
     ports:
       - 9696:9696
     restart: unless-stopped
@@ -204,29 +199,29 @@ services:
     hostname: kopia
     container_name: kopia
     ports:
-        - 51515:51515
+      - 51515:51515
     command:
-        - server
-        - start
-        - --disable-csrf-token-checks
-        - --insecure
-        - --enable-actions
-        - --address=0.0.0.0:51515
-        - --server-username={{CONTAINER_USER}}
-        - --server-password={{KOPIA_UI_PASS}}
+      - server
+      - start
+      - --disable-csrf-token-checks
+      - --insecure
+      - --enable-actions
+      - --address=0.0.0.0:51515
+      - --server-username={{CONTAINER_USER}}
+      - --server-password={{KOPIA_UI_PASS}}
     environment:
-        TZ: {{ TIMEZONE }}
-        USER: {{ CONTAINER_USER }}
-        KOPIA_PASSWORD: {{ KOPIA_REPO_PASS }}
-        KOPIA_PERSIST_CREDENTIALS_ON_CONNECT: "true"
+      - TZ={{ TIMEZONE }}
+      - USER={{ CONTAINER_USER }}
+      - KOPIA_PASSWORD={{ KOPIA_REPO_PASS }}
+      - KOPIA_PERSIST_CREDENTIALS_ON_CONNECT="true"
     volumes:
-        - {{ STORAGE }}/docker/kopia/config:/app/config
-        - {{ STORAGE }}/docker/kopia/cache:/app/cache
-        - {{ STORAGE }}/docker/kopia/logs:/app/logs
-        - {{ STORAGE }}/docker:/data/docker:ro
-        - {{ STORAGE }}/files:/data/files:ro
-        - {{ BACKUP }}/kopia:/backups:shared
-        - {{ USER_PATH }}/scripts:/scripts:ro
+      - "{{ STORAGE }}/docker/kopia/config:/app/config"
+      - "{{ STORAGE }}/docker/kopia/cache:/app/cache"
+      - "{{ STORAGE }}/docker/kopia/logs:/app/logs"
+      - "{{ STORAGE }}/docker:/data/docker:ro"
+      - "{{ STORAGE }}/files:/data/files:ro"
+      - "{{ BACKUP }}/kopia:/backups:shared"
+      - "{{ USER_PATH }}/scripts:/scripts:ro"
     restart: unless-stopped
 
   tailscale:
@@ -240,10 +235,13 @@ services:
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_EXTRA_ARGS=--advertise-tags=tag:container --advertise-routes={{ LOCAL_SUBNET }}
     volumes:
-      - {{ STORAGE }}/docker/tailscale/state:/var/lib/tailscale
-      - {{ STORAGE }}/docker/tailscale/config:/config
+      - "{{ STORAGE }}/docker/tailscale/state:/var/lib/tailscale"
+      - "{{ STORAGE }}/docker/tailscale/config:/config"
       - /dev/net/tun:/dev/net/tun
     cap_add:
       - net_admin
       - sys_module
     restart: unless-stopped
+
+networks:
+  arr:
