@@ -51,7 +51,7 @@ ansible-playbook -i inventories/hosts -K playbook.yml -t docker --check --diff
 ansible-playbook -i inventories/hosts -K playbook.yml -t docker
 ```
 
-### Copy docker-compose.yml and restart only the specified container
+### Copy compose.yml and restart only the specified container
 ```shell
 ansible-playbook -i inventories/hosts -K playbook.yml -t container -e "container=samba"
 ```

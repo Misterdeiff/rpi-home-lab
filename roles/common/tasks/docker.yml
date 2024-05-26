@@ -5,19 +5,19 @@
     insertafter: EOF
   tags: docker
 
-- name: Generate docker-compose.yml file and copy it
+- name: Generate compose.yml file and copy it
   template:
-    src: docker-compose.yml.j2
-    dest: "{{ USER_PATH }}/docker-compose.yml"
-  tags: docker, docker-compose, docker-compose-restart, container
+    src: compose.yml
+    dest: "{{ USER_PATH }}/compose.yml"
+  tags: docker, compose, compose-restart, container
 
 - name: Stop Docker
   command: sudo docker-compose down --remove-orphans
-  tags: docker, docker-compose-restart
+  tags: docker, compose-restart
 
 - name: Start Docker
   command: sudo COMPOSE_HTTP_TIMEOUT=200 docker-compose up -d
-  tags: docker, docker-compose-restart
+  tags: docker, compose-restart
 
 - name: Restart Docker Container
   shell: sudo docker-compose restart {{ container }}
