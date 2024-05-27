@@ -34,13 +34,13 @@ TELEGRAM:
   CHAT_ID: 1234567
 
 # Containers
+CONTAINER_USER: user
+
 SAMBA:
   - USER: USER1
     PASS: 123456
   - USER: USER2
     PASS: 123456
-
-CONTAINER_USER: user
 
 PIHOLE_WEB_PASS: PiholePass
 
@@ -48,4 +48,4 @@ KOPIA_UI_PASS: UIPass
 KOPIA_REPO_PASS: RepoPass
 
 TAILSCALE_AUTHKEY: tskey-client-notAReal-OAuthClientSecret1Atawk # Check README.MD
-LOCAL_SUBNET: 192.168.0.0/32 #To advertise in Tailscale for remote access
+LOCAL_SUBNET: 192.168.0.0/24 #To advertise in Tailscale for remote access

@@ -1,22 +1,35 @@
-# Ansible
-## Requirements
+# Overview
+This repository contains a variety of docker containers, with the majority of them oriented to have your own media server using ARR solutions. It has been built using Ansible to create every single requirement. So, in case your system goes totally down, you will only need to apply the playbook and restore your docker config. Ideally you make a regular backup with Kopia in a different drive.
+
+I included some interesting container notes to take into account when configuring them.
+
+
+# My setup
+I have started this project using a Raspberry Pi 4 with 8GB RAM, that is the reason why the documentation and some files refers to it, but this project and be used in any other linux system. In addition, I also use an Argon case that includes a fan, if you don't have this case you can simply omit/remove the `argon` tasks.
+
+I also use two HDDs: The primary one stores all the media and docker config, the second one is only for backups (a partition for Timemachine and another partition for Kopia backups).
+
+# Requirements
 1. Install Ansible in your laptop
-```shell
-brew install ansible
-```
+   ```shell
+   brew install ansible
+   ```
 2. Load OS
-     2.1. Use Raspberry Pi Imager and select `Raspberry Pi OS Lite 64-bit` in the SD of the Raspberry Pi
-     2.2. Add your SSH key
-     2.3. Don't configure WiFi
+   - 2.1. Use Raspberry Pi Imager and select `Raspberry Pi OS Lite 64-bit` in the SD of the Raspberry Pi
+   - 2.2. Add your SSH key
+   - 2.3. Don't configure WiFi
 3. Connect your drive/s to Linux, run `lsblk -f` and find out their UUIDs
 4. Modify variables inside `roles/common/vars/main.yml`
 5. Adjust `inventories/hosts` as needed.
 6. Connect all drives included on step #4 to your Pi
 7. Create your own Telegram Bot for notifications from ARR apps, Watchtower and disk space
 8. Follow the steps under Tailscale container to get the `TAILSCALE_AUTHKEY`
-9. Run all tasks in the playbook.
+9. Run all tasks in the playbook:
+   ```shell
+   ansible-playbook -i inventories/hosts -K playbook.yml
+   ```
 
-### Telegram
+## Telegram
 In order to create your own bot follow the next steps:
 1. Create a Telegram bot with `@BotFather` (the verified one)
 2. Paste your bot's token in the main.yml file and use it to create connections in the ARR apps (Overseerr, Radarr, Sonarr, Prowlarr)
@@ -27,31 +40,31 @@ In order to create your own bot follow the next steps:
    4.3. Use Telegram web and access your new Channel. Get the Channel ID from the URL. It usually starts with `-100`
    4.4. Use this Channel ID in the Connection configured in Radarr and Sonarr
 
-## Useful commands
+# Useful commands
 
-### Get a List of Playbook Tasks
+## Get a List of Playbook Tasks
 ``` shell
 ansible-playbook -i inventories/hosts -K playbook.yml --list-tasks
 ```
 
-### Run all Tasks in Playbook
+## Run all Tasks in Playbook
 ```shell
 ansible-playbook -i inventories/hosts -K playbook.yml
 ```
 
-### Test changes
+## Test changes
 Use --check for a dry run and, in addition, use --diff to have a detail differences
 
 ```shell
 ansible-playbook -i inventories/hosts -K playbook.yml -t docker --check --diff
 ```
 
-### Run task with a Specific Tag - Example: Docker installation
+## Run task with a Specific Tag - Example: Docker installation
 ```shell
 ansible-playbook -i inventories/hosts -K playbook.yml -t docker
 ```
 
-### Copy compose.yml and restart only the specified container
+## Copy compose.yml and restart only the specified container
 ```shell
 ansible-playbook -i inventories/hosts -K playbook.yml -t container -e "container=samba"
 ```
@@ -78,7 +91,7 @@ CPU TEMP     FAN POWER
 
 You can config different settings by using `argonone-config`. To uninstall: `argonone-uninstall`.
 
-# Containers
+# Container Notes
 ## Plex
 1. Go to http://YOUR_IP:32400/web/index.html
 2. Configure your folders
