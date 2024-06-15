@@ -42,6 +42,8 @@ SAMBA:
   - USER: USER2
     PASS: 123456
 
+WATCHTOWER_CRON: 0 0 4 1 * * # First day of the month
+
 PIHOLE_WEB_PASS: PiholePass
 
 KOPIA_UI_PASS: UIPass
