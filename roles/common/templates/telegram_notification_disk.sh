@@ -4,9 +4,14 @@
 BOT_TOKEN={{ TELEGRAM.TOKEN }}
 CHAT_ID={{ TELEGRAM.CHAT_ID }}
 ALERT_LIMIT={{ DISK_ALERT_LIMIT }} # Set alert threshold
+EXCLUDE_DISK={{ EXCLUDE_DISK }} # Pass the name of the drive to exclude
 
 # Fetch all disks mounted that start with /dev/
-DISK_PATHS=$(df -h | awk '$1 ~ /^\/dev\// {print $1}')
+if [ -z "$EXCLUDE_DISK" ]; then
+    DISK_PATHS=$(df -h | awk '$1 ~ /^\/dev\// {print $1}')
+else
+    DISK_PATHS=$(df -h | awk '$1 ~ /^\/dev\// {print $1}' | grep -v "$EXCLUDE_DISK")
+fi
 
 # Function to send notification to Telegram
 send_telegram() {
