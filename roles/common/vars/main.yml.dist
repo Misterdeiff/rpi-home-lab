@@ -17,6 +17,7 @@ STORAGE: "{{ DRIVES[0]['MOUNT'] }}"
 BACKUP: "{{ DRIVES[1]['MOUNT'] }}"
 TIMEMACHINE: "{{ DRIVES[2]['MOUNT'] }}"
 DISK_ALERT_LIMIT: 80
+EXCLUDE_DISK: /dev/sda2 # timemachine
 USER: USER
 USER_PATH: /home/{{ USER }}
 TIMEZONE: Europe/Madrid
