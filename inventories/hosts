@@ -1,2 +1,2 @@
 [lab]
-rpi ansible_host=rpi.local ansible_user=dsarrias
+docker ansible_host=192.168.10.101 ansible_user=dsarrias
