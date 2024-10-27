@@ -2,12 +2,12 @@
   include_vars:
     file: "{{ playbook_dir }}/roles/common/vars/main.yml"
     
-- name: "Update Apt Cache"
+- name: Update Apt Cache
   apt: 
     update_cache: yes
   tags: installation
 
-- name: "Install Common packages"
+- name: Install Common packages
   apt:
     name: "{{ item }}"
     state: latest
@@ -16,6 +16,7 @@
     - curl
     - zsh
     - git
+    - btop
     - apt-transport-https
     - ca-certificates
     - ntfs-3g
@@ -25,26 +26,51 @@
     - python3-venv
   tags: installation, packages
 
-- name: Get Docker key
-  shell: curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
-  tags: docker
+# ctop
+- name: Install docker-ctop with prerequisites and repository setup
+  block:
+    - name: "Install prerequisites"
+      apt:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - gnupg
+        - lsb-release
 
-- name: Add Docker key
-  command: sudo apt-key fingerprint 0EBFCD88
-  tags: docker
+    - name: Add azlux repository GPG key
+      shell: curl -fsSL https://azlux.fr/repo.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/azlux-archive-keyring.gpg
 
-- name: Add Docker repository to docker.list
-  shell: |
-    echo "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | 
-    sudo tee /etc/apt/sources.list.d/docker.list
-  tags: docker
+    - name: "Add azlux repository to sources list"
+      shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/azlux-archive-keyring.gpg] http://packages.azlux.fr/debian $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/azlux.list >/dev/null
 
-- name: Install docker-ce and docker-compose
-  shell: sudo apt-get update && sudo apt-get install -y --no-install-recommends docker-ce docker-compose
-  tags: docker
+    - name: Update apt repository and install docker-ctop
+      apt:
+        update_cache: yes
+        name: docker-ctop
+        state: latest
 
-- name: Add my user to Docker
-  command: "sudo usermod -a -G docker {{ USER }}"
+  tags: installation, packages, ctop
+
+# Docker
+- name: Setup Docker repository and install Docker
+  block:
+    - name: Get Docker key
+      shell: curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+
+    - name: Add Docker key
+      command: sudo apt-key fingerprint 0EBFCD88
+
+    - name: Add Docker repository to docker.list
+      shell: |
+        echo "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | 
+        sudo tee /etc/apt/sources.list.d/docker.list
+
+    - name: Install docker-ce and docker-compose
+      shell: sudo apt-get update && sudo apt-get install -y --no-install-recommends docker-ce docker-compose
+
+    - name: Add my user to Docker
+      command: "sudo usermod -a -G docker {{ USER }}"
+
   tags: docker
   
 # Argon
@@ -53,29 +79,28 @@
   tags: argon
 
 # ZSH
-- name: Install Oh My Zsh
-  become_user: "{{ USER }}"
-  git:
-    repo: https://github.com/ohmyzsh/ohmyzsh.git
-    dest: ~/.oh-my-zsh
-    clone: yes
-  tags: packages, zsh
+- name: Install Oh My Zsh and setup
+  block:
+    - name: Install Oh My Zsh
+      become_user: "{{ USER }}"
+      git:
+        repo: https://github.com/ohmyzsh/ohmyzsh.git
+        dest: ~/.oh-my-zsh
+        clone: yes
 
-- name: Generate zshrc file and copy it
-  become_user: "{{ USER }}"
-  template:
-    src: zshrc
-    dest: "~/.zshrc"
-  tags: packages, zsh
+    - name: Generate zshrc file and copy it
+      become_user: "{{ USER }}"
+      template:
+        src: zshrc
+        dest: "~/.zshrc"
 
-- name: Install Powerlevel10k theme
-  become_user: "{{ USER }}"
-  git:
-    repo: https://github.com/romkatv/powerlevel10k.git
-    dest: ~/.oh-my-zsh/custom/themes/powerlevel10k
-  tags: packages, zsh
+    - name: Install Powerlevel10k theme
+      become_user: "{{ USER }}"
+      git:
+        repo: https://github.com/romkatv/powerlevel10k.git
+        dest: ~/.oh-my-zsh/custom/themes/powerlevel10k
 
-- name: Set Zsh as default shell
-  become: true
-  shell: chsh -s "$(which zsh)" {{ USER }}
-  tags: packages, zsh
+    - name: Set Zsh as default shell
+      become: true
+      shell: chsh -s "$(which zsh)" {{ USER }}
+  tags: zsh
